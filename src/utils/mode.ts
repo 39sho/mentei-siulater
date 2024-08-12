@@ -1,4 +1,4 @@
-export type Mode = 'normal' | 'search' | 'simulate'
+export type Mode = 'normal' | 'search' | 'simulate' | 'showAll'
 
 // dbModeKey : dbのモードへのアクセスのためのキー
 //             他の場所でdbモードの値を変更できないようにするprivate変数

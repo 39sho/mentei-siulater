@@ -1,19 +1,19 @@
 import { Ihan, findIhanByName, findIhansByMaxPoint } from "../infra/db";
+import { User, getUser, setUser } from "../utils/user";
 import { UsecaseError } from "./errors";
 
-export const simulate = (ihanName: string): Ihan[] | UsecaseError => {
+export const simulate = (db: any, ihanName: string): Ihan[] | UsecaseError => {
     try {
         const ihan = findIhanByName(ihanName);
 
-        // not exists
         if (ihan === null) {
-            // ここで、対応する違反事項が存在しなかったことを表現したい
             return {
                 kind: 'NotFound',
                 message: 'NotFound',
             }
         }
 
+        setUser(db, { point: getUser(db).point + ihan.point } satisfies User);
         const remain = 6 - ihan.point;
         const acceptableIhans = findIhansByMaxPoint(remain);
 
@@ -23,7 +23,7 @@ export const simulate = (ihanName: string): Ihan[] | UsecaseError => {
         console.error(err);
         return {
             kind: 'InternalServerError',
-            message: 'internal server errorだよ〜〜〜〜ん^^',
+            message: 'internal server error',
         }
     }
 };

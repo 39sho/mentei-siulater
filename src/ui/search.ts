@@ -1,6 +1,7 @@
 import { Message } from "@line/bot-sdk";
 import { search } from "../usecase/search";
 import { setMode } from "../utils/mode";
+import { shuffle } from "../utils/shuffle";
 
 export const replyMessages = (db: any, text: string): Message[] => {
 
@@ -26,25 +27,54 @@ export const replyMessages = (db: any, text: string): Message[] => {
             text: `検索結果(${slicedResult.length}件)`,
         },
         {
-            type: 'template',
-            altText: '違反項目のcarousel',
-            template: {
+            type: "flex",
+            altText: "carousel",
+            contents: {
                 type: "carousel",
-                columns: slicedResult.map(ihan => ({
-                    text: ihan.name,
-                    actions: [
-                        {
-                            type: 'message',
-                            label: 'select',
-                            text: ihan.name,
-                        }
-                    ]
-                })),
-            }
+                /* デモのためにsliceしてからshuffleしてるが、shuffleしてからsliceしたい */
+                contents: shuffle(slicedResult).map(ihan => (
+                    {
+                        type: "bubble",
+                        hero: {
+                            type: "image",
+                            url: ihan.imageUrl,
+                            size: "full",
+                            aspectRatio: "1.51:1",
+                            aspectMode: "fit",
+                        },
+                        body: {
+                            type: "box",
+                            layout: "vertical",
+                            contents: [
+                                {
+                                    type: "text",
+                                    text: ihan.name,
+                                    align: "center",
+                                    wrap: true,
+                                },
+                            ]
+                        },
+                        footer: {
+                            type: "box",
+                            layout: "horizontal",
+                            contents: [
+                                {
+                                    type: "button",
+                                    action: {
+                                        type: "message",
+                                        label: "選択する",
+                                        text: ihan.name,
+                                    },
+                                },
+                            ],
+                        },
+                    }
+                )),
+            },
         },
         {
             type: 'text',
-            text: '続けてシミュレーションを行なう場合は、「シミュレーションを始める」を入力してください',
+            text: '続けてシミュレーションを行う場合は、「シミュレーションを始める」を選択してください',
         },
     ];
 }

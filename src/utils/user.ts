@@ -1,5 +1,5 @@
 export type User = {
-  userId: string,
+  // userId: string,
   point: number,
 }
 
